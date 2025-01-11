@@ -1,2 +1,2 @@
-192.168.73.46
-192.168.73.187
+192.168.73.46 ansible_python_interpreter=/usr/bin/python3
+192.168.73.187 ansible_python_interpreter=/usr/bin/python3
