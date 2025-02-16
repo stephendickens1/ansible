@@ -1,0 +1,53 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: Switch to user stephen
+    set_fact:
+      ansible_user: stephen
+
+  - name: Confirm switch to stephen
+    debug:
+      msg: "Current user is {{ ansible_user }}"
+    
+  - name: install updates (RedHat)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
+
+
+  - name: install updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  tasks:
+
+    - name: create simone user
+      tags: always
+      user:
+        name: simone
+        groups: root
+    
+    - name: add ssh key for simone
+      tags: always
+      authorized_key:
+        user: simone
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB+w8qasJNlKtCIxTPsBmIOV6cszAg2rJWuXRMC16dK0 ansible"
+
+    - name: add sudoers file for simone
+      tags: always
+      copy:
+        src: sudoer_simone
+        dest: /etc/sudoers.d/simone
+        owner: root
+        group: root
+        mode: 0440
